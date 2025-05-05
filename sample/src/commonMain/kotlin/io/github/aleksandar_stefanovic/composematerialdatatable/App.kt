@@ -2,15 +2,21 @@ package io.github.aleksandar_stefanovic.composematerialdatatable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -85,10 +91,10 @@ private val movies = listOf(
 internal fun App() {
     MaterialTheme {
         val columnSpecs = listOf<ColumnSpec<Movie, *>>(
-            TextColumnSpec("Title", WidthSetting.Flex(1f)) { it.title },
+            TextColumnSpec("Title", WidthSetting.WrapContent) { it.title },
             DateColumnSpec("Release Date", WidthSetting.WrapContent, { it.releaseDate }),
             DoubleColumnSpec("Rating", WidthSetting.WrapContent, valueSelector = { it.rating }),
-            IntColumnSpec("Awards", WidthSetting.WrapContent, { it.awardCount }),
+            IntColumnSpec("Awards", WidthSetting.Static(80.dp), { it.awardCount }),
             DropdownColumnSpec(
                 "Genre",
                 WidthSetting.WrapContent,
@@ -97,19 +103,22 @@ internal fun App() {
                 Genre.entries.toList(),
                 onChoicePicked = {}
             ),
-            CheckboxColumnSpec("Watched", WidthSetting.WrapContent) { it.watched }
+            //CheckboxColumnSpec("Watched", WidthSetting.WrapContent) { it.watched }
         )
 
         Column {
             var selectedCount by remember { mutableStateOf(0) }
 
-            Table(
-                columnSpecs,
-                movies,
-                modifier = Modifier.padding(20.dp),
-                showSelectionColumn = true,
-                onSelectionChange = { list -> selectedCount = list.size }
-            )
+            CompositionLocalProvider(LocalTextStyle provides TextStyle(fontSize = 10.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Thin)) {
+                Table(
+                    columnSpecs,
+                    movies,
+                    modifier = Modifier.padding(2.dp),
+                    showSelectionColumn = false,
+                    onSelectionChange = { list -> selectedCount = list.size },
+                    defaultRowHeight = 42.dp
+                )
+            }
 
             if (selectedCount > 0) {
                 Text("Selected: $selectedCount")

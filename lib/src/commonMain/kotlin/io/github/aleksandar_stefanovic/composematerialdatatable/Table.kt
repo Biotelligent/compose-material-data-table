@@ -29,9 +29,12 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.MultiContentMeasurePolicy
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.state.ToggleableState
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import io.github.aleksandar_stefanovic.composematerialdatatable.filter.ColumnFilter
 import io.github.aleksandar_stefanovic.composematerialdatatable.filter.FilterBar
@@ -49,8 +52,10 @@ public fun <T> Table(
     onSelectionChange: (Set<T>) -> Unit = {},
     showPaginationBar: Boolean = true,
     pageSizeOptions: List<Int> = listOf(10, 25, 50, 100),
-    defaultPageSize: Int = 25
+    defaultPageSize: Int = 25,
+    defaultRowHeight: Dp = 52.dp // Per material specs
 ) {
+    val defaultHeaderHeight = defaultRowHeight + 4.dp
     val totalFlexWeight =
         columnSpecs.map { it.widthSetting }.filterIsInstance<WidthSetting.Flex>().map { it.weight }
             .sum()
@@ -265,7 +270,7 @@ public fun <T> Table(
                                 WidthSetting.WrapContent -> {
                                     // Iterate over all the measurables in this row, find the widest one
                                     measurables.maxOf { rowMeasurables ->
-                                        val targetHeight = 56.dp // Per Material specs
+                                        val targetHeight = defaultHeaderHeight // Per Material specs
                                         rowMeasurables[colIndex].maxIntrinsicWidth(targetHeight.roundToPx())
                                     }
                                 }
@@ -294,7 +299,7 @@ public fun <T> Table(
 
                         val placeablesByRow: List<List<Placeable>> =
                             measurables.map { rowMeasurables ->
-                                val targetHeight = 56.dp.roundToPx()
+                                val targetHeight = defaultHeaderHeight.roundToPx()
                                 rowMeasurables.mapIndexed { colIndex, measurable ->
                                     val columnWidth = columnWidths[colIndex]
                                     val cellConstraints = Constraints(
@@ -349,9 +354,9 @@ public fun <T> Table(
                         measurables: List<List<IntrinsicMeasurable>>,
                         width: Int
                     ): Int {
-                        val headerHeight = 56.dp
+                        val headerHeight = defaultHeaderHeight
                         // Deducting one from size because that's the header row
-                        val totalRowHeight = (measurables.size - 1) * 52.dp
+                        val totalRowHeight = (measurables.size - 1) * defaultRowHeight
                         return (headerHeight + totalRowHeight).roundToPx() + totalVerticalPadding
                     }
 
@@ -381,7 +386,7 @@ public fun <T> Table(
                                 is WidthSetting.WrapContent -> {
                                     measurables.mapIndexed { index, measurables ->
                                         val rowHeight =
-                                            (if (index == 0) 56.dp else 52.dp).roundToPx()
+                                            (if (index == 0) defaultHeaderHeight else defaultRowHeight).roundToPx()
                                         val cIndex =
                                             if (showSelectionColumn) colIndex + 1 else colIndex
                                         val measurable = measurables[cIndex]
@@ -393,7 +398,7 @@ public fun <T> Table(
 
                         val selectionColumnWidth = if (showSelectionColumn) {
                             val selectionHeaderCellMeasurable = measurables[0][0]
-                            selectionHeaderCellMeasurable.maxIntrinsicWidth(56.dp.roundToPx())
+                            selectionHeaderCellMeasurable.maxIntrinsicWidth(defaultHeaderHeight.roundToPx())
                         } else 0
                         return widths.sum() + selectionColumnWidth
                     }
