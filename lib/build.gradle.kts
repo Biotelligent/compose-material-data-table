@@ -1,4 +1,7 @@
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SonatypeHost
+import org.bouncycastle.cms.RecipientId.password
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -12,8 +15,8 @@ plugins {
     alias(libs.plugins.vanniktechMavenPublish)
 }
 
-version = "1.2.1"
-group = "io.github.aleksandar-stefanovic"
+version = "1.2.3"
+group = "com.biotelligent"
 
 kotlin {
 
@@ -30,29 +33,29 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
     
-    jvm("desktop")
-    
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = "lib"
-        browser {
-            val rootDirPath = project.rootDir.path
-            val projectDirPath = project.projectDir.path
-            commonWebpackConfig {
-                outputFileName = "lib.js"
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(rootDirPath)
-                        add(projectDirPath)
-                    }
-                }
-            }
-        }
-    }
+//    jvm("desktop")
+//
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        moduleName = "lib"
+//        browser {
+//            val rootDirPath = project.rootDir.path
+//            val projectDirPath = project.projectDir.path
+//            commonWebpackConfig {
+//                outputFileName = "lib.js"
+//                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+//                    static = (static ?: mutableListOf()).apply {
+//                        // Serve sources to debug inside browser
+//                        add(rootDirPath)
+//                        add(projectDirPath)
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     sourceSets {
-        val desktopMain by getting
+//        val desktopMain by getting
 
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -62,9 +65,9 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.kotlinx.datetime)
         }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-        }
+//        desktopMain.dependencies {
+//            implementation(compose.desktop.currentOs)
+//        }
     }
 }
 
@@ -90,10 +93,39 @@ android {
     }
 }
 
-mavenPublishing {
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+// Refer https://vanniktech.github.io/gradle-maven-publish-plugin/what/
+// ./gradlew :lib:publishToGitHubPackagesRepository
+// Publish all klib and .aar types to $(HOME)/.m2/repository/com/airware/
+// ./gradlew :lib:publishKotlinMultiplatformPublicationToMavenLocal
+// nb. Only lowercase letters are allowed in the artifact and package urls
+ mavenPublishing {
+    //publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
 
-    signAllPublications()
+    configure(
+        KotlinMultiplatform(
+            javadocJar = JavadocJar.None(),
+            sourcesJar = false,
+            androidVariantsToPublish = listOf("debug", "release")
+        )
+    )
+
+     // ./gradlew publishAllPublicationsToGithubPackagesRepository
+      publishing {
+          repositories {
+              maven {
+                  url = uri("https://maven.pkg.github.com/Biotelligent/compose-material-data-table")
+                  name = "GithubPackages"
+                  credentials {
+                      username = project.findProperty("GPR_USER").toString()
+                      password = (project.findProperty("GPR_PAT") ?: System.getenv("GPR_PAT") ?: "").toString()
+                  }
+              }
+              mavenLocal()
+          }
+      }
+
+
+     //signAllPublications()
 
     coordinates(group.toString(), "composematerialdatatable", version.toString())
 
@@ -116,10 +148,10 @@ mavenPublishing {
                 url = "https://github.com/aleksandar-stefanovic"
             }
         }
-        scm {
-            url = "https://github.com/aleksandar-stefanovic/compose-material-data-table"
-            connection = "scm:git:git://github.com/aleksandar-stefanovic/compose-material-data-table.git"
-            developerConnection = "scm:git:ssh://git@github.com/aleksandar-stefanovic/compose-material-data-table.git"
-        }
+//        scm {
+//            url = "https://github.com/aleksandar-stefanovic/compose-material-data-table"
+//            connection = "scm:git:git://github.com/aleksandar-stefanovic/compose-material-data-table.git"
+//            developerConnection = "scm:git:ssh://git@github.com/aleksandar-stefanovic/compose-material-data-table.git"
+//        }
     }
 }
