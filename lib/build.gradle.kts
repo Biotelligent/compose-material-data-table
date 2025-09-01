@@ -1,7 +1,4 @@
-import com.vanniktech.maven.publish.JavadocJar
-import com.vanniktech.maven.publish.KotlinMultiplatform
-import com.vanniktech.maven.publish.SonatypeHost
-import org.bouncycastle.cms.RecipientId.password
+import com.vanniktech.maven.publish.*
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -15,7 +12,7 @@ plugins {
     alias(libs.plugins.vanniktechMavenPublish)
 }
 
-version = "1.2.3"
+version = "1.2.4"
 group = "com.biotelligent"
 
 kotlin {
@@ -33,29 +30,29 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
     
-//    jvm("desktop")
-//
-//    @OptIn(ExperimentalWasmDsl::class)
-//    wasmJs {
-//        moduleName = "lib"
-//        browser {
-//            val rootDirPath = project.rootDir.path
-//            val projectDirPath = project.projectDir.path
-//            commonWebpackConfig {
-//                outputFileName = "lib.js"
-//                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-//                    static = (static ?: mutableListOf()).apply {
-//                        // Serve sources to debug inside browser
-//                        add(rootDirPath)
-//                        add(projectDirPath)
-//                    }
-//                }
-//            }
-//        }
-//    }
+    jvm("desktop")
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        outputModuleName.set("lib")
+        browser {
+            val rootDirPath = project.rootDir.path
+            val projectDirPath = project.projectDir.path
+            commonWebpackConfig {
+                outputFileName = "lib.js"
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf()).apply {
+                        // Serve sources to debug inside browser
+                        add(rootDirPath)
+                        add(projectDirPath)
+                    }
+                }
+            }
+        }
+    }
     
     sourceSets {
-//        val desktopMain by getting
+        val desktopMain by getting
 
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -63,11 +60,12 @@ kotlin {
             implementation(compose.material)
             implementation(compose.material3)
             implementation(compose.ui)
+            implementation(compose.materialIconsExtended)
             implementation(libs.kotlinx.datetime)
         }
-//        desktopMain.dependencies {
-//            implementation(compose.desktop.currentOs)
-//        }
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
     }
 }
 

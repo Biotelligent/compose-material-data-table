@@ -34,7 +34,7 @@ kotlin {
     
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "sample"
+        outputModuleName.set("sample")
         browser {
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
@@ -91,7 +91,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 2
-        versionName = "1.2.2"
+        versionName = "1.2.3"
     }
     packaging {
         resources {
@@ -121,7 +121,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "io.github.aleksandar_stefanovic.composematerialdatatable"
-            packageVersion = "1.2.1"
+            packageVersion = "1.2.3"
         }
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
@@ -216,7 +217,7 @@ public fun <T> Table(
     val headerAndBodyRowComposables: List<@Composable () -> Unit> = listOf(headerRowComposableLambda) + composableLambdasByRow
 
     SelectionContainer {
-        Card(modifier, border = BorderStroke(1.dp, Color(0x1f000000))) {
+        Card(modifier, colors = CardDefaults.cardColors().copy(containerColor = Color.White), border = BorderStroke(1.dp, Color(0x1f000000))) {
 
             FilterBar(
                 Modifier.fillMaxWidth().background(Color.White),
