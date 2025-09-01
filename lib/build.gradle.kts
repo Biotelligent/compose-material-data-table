@@ -116,6 +116,8 @@ android {
                   credentials {
                       username = project.findProperty("GPR_USER").toString()
                       password = (project.findProperty("GPR_PAT") ?: System.getenv("GPR_PAT") ?: "").toString()
+                      println("GPR_USER=$username")
+                      println("GPR_PAT=$password")
                   }
               }
               mavenLocal()
