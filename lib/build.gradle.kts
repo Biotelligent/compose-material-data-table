@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.vanniktechMavenPublish)
 }
 
-version = "1.2.4"
+version = "1.2.5"
 group = "com.biotelligent"
 
 kotlin {

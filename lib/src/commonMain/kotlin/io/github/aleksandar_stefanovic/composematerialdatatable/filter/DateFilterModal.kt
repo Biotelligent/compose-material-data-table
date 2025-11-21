@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package io.github.aleksandar_stefanovic.composematerialdatatable.filter
 
 import androidx.compose.foundation.Image
@@ -33,10 +35,11 @@ import io.github.aleksandar_stefanovic.composematerialdatatable.DateColumnSpec
 import io.github.aleksandar_stefanovic.composematerialdatatable.DropdownPicker
 import io.github.aleksandar_stefanovic.composematerialdatatable.icons.DataTableIcons
 import io.github.aleksandar_stefanovic.composematerialdatatable.icons.DateRange
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
